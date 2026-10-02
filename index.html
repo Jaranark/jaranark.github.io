@@ -4,25 +4,309 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Safely Apps</title>
-<meta name="description" content="Small, private phone utilities. No account, your data stays on your device.">
+<meta name="description" content="Five small phone utilities that keep your data on your phone. No account, no sign-up, works offline. One-time Pro, never a subscription.">
+<meta property="og:title" content="Safely Apps">
+<meta property="og:description" content="Phone utilities that stay on your phone.">
+<meta property="og:image" content="https://jaranark.github.io/img/money.webp">
+<link rel="icon" href="img/key-converter.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Martian+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="style.css">
+<style>
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 16px; }
+
+  /* ---------- top bar ---------- */
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+  .brand b { font: 800 1.05rem/1 var(--font); letter-spacing: 0.02em; }
+  .dots { display: grid; grid-template-columns: repeat(3, 8px); gap: 3px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  nav { display: flex; gap: 22px; }
+  nav a { font: 600 0.72rem/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+  nav a:hover { color: var(--ink); }
+  @media (max-width: 640px) { nav a:not(.keep) { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 40px 0 72px; }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; padding-top: 16px; } }
+  h1 {
+    font: 900 clamp(2.6rem, 7vw, 5rem)/0.95 var(--font);
+    letter-spacing: -0.035em;
+    margin: 18px 0 22px;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lede { font-size: 1.15rem; max-width: 34em; color: var(--muted); margin: 0 0 28px; }
+
+  /* the dark readout, like the calculator display */
+  .readout {
+    background: var(--display);
+    color: var(--on-display);
+    border-radius: 18px;
+    padding: 18px 22px 20px;
+    box-shadow: inset 0 2px 0 rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.06), 0 1px 0 rgba(255,255,255,0.5);
+    max-width: 520px;
+  }
+  .readout .row { display: flex; gap: 14px; font: 600 0.66rem/1 var(--mono); letter-spacing: 0.14em; color: var(--on-display-muted); }
+  .readout .row span::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4b524f; margin-right: 6px; vertical-align: 1px; }
+  .readout .row span.on::before { background: var(--led); box-shadow: 0 0 8px var(--led); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 18px; }
+  .stats div { font: 600 0.62rem/1.3 var(--mono); letter-spacing: 0.12em; color: var(--on-display-muted); text-transform: uppercase; }
+  .stats strong { display: block; font: 600 clamp(2rem, 5vw, 2.8rem)/1 var(--mono); color: var(--on-display); letter-spacing: -0.02em; margin-bottom: 6px; }
+  .stats div:last-child strong { color: var(--led); }
+
+  /* phones */
+  .phones { position: relative; height: 600px; }
+  @media (max-width: 900px) { .phones { height: 520px; } }
+  .phone {
+    position: absolute; width: 250px; aspect-ratio: 600 / 1100;
+    border-radius: 38px; padding: 9px; background: #101211;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08) inset;
+    transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 30px; }
+  .phone.p1 { left: 0; top: 70px; transform: rotate(-7deg); }
+  .phone.p2 { left: 50%; top: 0; transform: translateX(-50%); z-index: 2; width: 270px; }
+  .phone.p3 { right: 0; top: 70px; transform: rotate(7deg); }
+  .phones:hover .p1 { transform: rotate(-10deg) translateX(-14px); }
+  .phones:hover .p3 { transform: rotate(10deg) translateX(14px); }
+  @media (max-width: 560px) {
+    .phone { width: 170px; } .phone.p2 { width: 200px; }
+    .phones { height: 400px; }
+  }
+
+  /* ---------- keys strip ---------- */
+  .keys { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; padding: 8px 0 88px; }
+  .key { display: grid; justify-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .key img {
+    width: 84px; height: 84px; border-radius: 50%;
+    filter: drop-shadow(0 10px 12px rgba(0,0,0,0.18));
+    transition: transform .12s ease, filter .12s ease;
+  }
+  .key:hover img { transform: translateY(-3px); filter: drop-shadow(0 14px 16px rgba(0,0,0,0.22)); }
+  .key:active img { transform: translateY(3px); filter: drop-shadow(0 3px 4px rgba(0,0,0,0.2)); }
+  .key span { font: 600 0.68rem/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---------- sections ---------- */
+  section { padding: 72px 0; }
+  .head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+  h2 { font: 900 clamp(2rem, 5vw, 3.2rem)/1 var(--font); letter-spacing: -0.03em; margin: 10px 0 0; }
+  .head p { max-width: 30em; margin: 0; color: var(--muted); }
+
+  /* app modules: panels with screws in the corners */
+  .modules { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+  .module {
+    grid-column: span 2;
+    position: relative;
+    background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface) 88%, #000));
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 26px 24px 24px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.55) inset, 0 18px 30px -24px rgba(0,0,0,0.35);
+    display: flex; flex-direction: column; gap: 14px;
+    overflow: hidden;
+  }
+  .module.wide { grid-column: span 3; }
+  @media (max-width: 960px) { .module, .module.wide { grid-column: span 3; } }
+  @media (max-width: 640px) { .module, .module.wide { grid-column: span 6; } }
+  .module::before, .module::after {
+    content: ""; position: absolute; top: 12px; width: 7px; height: 7px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff8, #0003); border: 1px solid #0002;
+  }
+  .module::before { left: 12px; } .module::after { right: 12px; }
+  .module .id { display: flex; align-items: center; gap: 14px; }
+  .module .id img { width: 54px; height: 54px; }
+  .module h3 { font: 800 1.35rem/1.1 var(--font); margin: 0; letter-spacing: -0.01em; }
+  .module .tag { font-size: 0.95rem; color: var(--muted); margin: 2px 0 0; }
+  .module ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; font-size: 0.95rem; }
+  .module li { display: flex; gap: 10px; }
+  .module li::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: 0.55em; border-radius: 50%; background: var(--c); }
+  .module .shot { margin: 6px -24px -24px; padding: 18px 24px 0; background: color-mix(in srgb, var(--c) 16%, transparent); display: flex; justify-content: center; }
+  .module .shot img { width: 62%; max-width: 230px; border-radius: 22px 22px 0 0; box-shadow: 0 -2px 0 6px #101211, 0 10px 30px rgba(0,0,0,0.3); margin-top: 6px; }
+  .module .shot.art { flex: 1; align-items: center; padding: 28px 24px; }
+  .module .shot.art img { width: 46%; max-width: 160px; border-radius: 50%; box-shadow: none; filter: drop-shadow(0 16px 20px rgba(0,0,0,0.25)); margin: 0; }
+  .status { margin: 0; font: 600 0.62rem/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--led); box-shadow: 0 0 8px var(--led); }
+
+  /* principles */
+  .principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 960px) { .principles { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .principles { grid-template-columns: 1fr; } }
+  .principle { border-top: 2px solid var(--ink); padding-top: 16px; }
+  .principle .n { font: 600 0.7rem/1 var(--mono); letter-spacing: 0.14em; color: var(--muted); }
+  .principle h3 { font: 800 1.2rem/1.2 var(--font); margin: 14px 0 8px; }
+  .principle p { margin: 0; color: var(--muted); font-size: 0.97rem; }
+
+  /* pro */
+  .pro {
+    background: var(--display); color: var(--on-display);
+    border-radius: 32px; padding: clamp(28px, 5vw, 56px);
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center;
+    box-shadow: inset 0 2px 0 rgba(0,0,0,0.5), 0 30px 60px -30px rgba(0,0,0,0.5);
+  }
+  @media (max-width: 860px) { .pro { grid-template-columns: 1fr; } }
+  .pro .eyebrow { color: var(--on-display-muted); }
+  .pro h2 { color: var(--on-display); }
+  .pro p { color: var(--on-display-muted); max-width: 32em; }
+  .price { font: 600 0.75rem/1.5 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--led); }
+  .swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .swatches i {
+    aspect-ratio: 1; border-radius: 50%; background: var(--c);
+    box-shadow: inset 0 -5px 0 rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.35), 0 6px 12px rgba(0,0,0,0.35);
+  }
+  .swatches i.ring { background: conic-gradient(var(--c) 0 50%, #e9ece6 0); }
+
+  footer { padding: 56px 0 72px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--line); margin-top: 40px; }
+  footer a { color: var(--ink); }
+</style>
 </head>
 <body>
-<main>
-  <p class="eyebrow">Safely Apps</p>
-  <h1>Small, private phone utilities.</h1>
-  <p class="muted">No account. No sign-up. Your data stays on your device.</p>
-  <ul class="apps">
-    <li><strong>Safely Convert</strong><span class="muted">Units and conversions, offline</span></li>
-    <li><strong>Safely Scan</strong><span class="muted">QR and barcodes, with link check</span></li>
-    <li><strong>Safely Calc</strong><span class="muted">Calculator with tape and scientific mode</span></li>
-    <li><strong>Safely PDF</strong><span class="muted">Scan documents to PDF, with text recognition</span></li>
-    <li><strong>Safely Money</strong><span class="muted">Expenses, budgets and reminders</span></li>
-  </ul>
+<div class="wrap">
+
+  <header class="top">
+    <a class="brand" href="./">
+      <span class="dots" aria-hidden="true">
+        <i style="--c:var(--orange)"></i><i style="--c:var(--blue)"></i><i style="--c:var(--yellow)"></i>
+        <i style="--c:var(--green)"></i><i style="--c:var(--coral)"></i><i style="--c:var(--ink)"></i>
+      </span>
+      <b>SAFELY APPS</b>
+    </a>
+    <nav>
+      <a href="#apps">Apps</a>
+      <a href="#principles">Principles</a>
+      <a href="#pro">Pro</a>
+      <a class="keep" href="safely/privacy/">Privacy</a>
+    </nav>
+  </header>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div>
+      <p class="status">Coming soon to Google Play</p>
+      <h1 id="hero-title">The everyday tools,<br><em>minus the data grab.</em></h1>
+      <p class="lede">Five small apps that do one job well: convert, scan, calculate, make PDFs, track money. No account, no sign-up, nothing uploaded. Pay once if you want more, never a subscription.</p>
+      <div class="readout" role="img" aria-label="Accounts needed: zero. Our servers: zero. Subscriptions: zero.">
+        <div class="row"><span class="on">LOCAL</span><span class="on">OFFLINE</span><span>CLOUD</span></div>
+        <div class="stats">
+          <div><strong>0</strong>Accounts<br>needed</div>
+          <div><strong>0</strong>Servers<br>of ours</div>
+          <div><strong>0</strong>Subscriptions<br>ever</div>
+        </div>
+      </div>
+    </div>
+    <div class="phones" aria-hidden="true">
+      <div class="phone p1"><img src="img/calculator.webp" alt=""></div>
+      <div class="phone p2"><img src="img/money.webp" alt=""></div>
+      <div class="phone p3"><img src="img/converter.webp" alt=""></div>
+    </div>
+  </section>
+
+  <div class="keys" aria-label="The apps">
+    <a class="key" href="#convert"><img src="img/key-converter.png" alt=""><span>Convert</span></a>
+    <a class="key" href="#scan"><img src="img/key-scanner.png" alt=""><span>Scan</span></a>
+    <a class="key" href="#calc"><img src="img/key-calculator.png" alt=""><span>Calc</span></a>
+    <a class="key" href="#pdf"><img src="img/key-docscan.png" alt=""><span>PDF</span></a>
+    <a class="key" href="#money"><img src="img/key-money.png" alt=""><span>Money</span></a>
+  </div>
+
+  <section id="apps" aria-labelledby="apps-title">
+    <div class="head">
+      <div>
+        <p class="eyebrow">The apps</p>
+        <h2 id="apps-title">One job each.<br>Done properly.</h2>
+      </div>
+      <p>Built like instruments: big keys, clear displays, nothing in the way. Every app has light and dark styles and a choice of colors.</p>
+    </div>
+
+    <div class="modules">
+      <article class="module wide" id="money" style="--c:var(--coral)">
+        <div class="id"><img src="img/key-money.png" alt=""><div><h3>Safely Money</h3><p class="tag">Expenses, budgets and reminders</p></div></div>
+        <ul>
+          <li>Add an expense or income in seconds</li>
+          <li>Accounts, categories, monthly budgets and charts</li>
+          <li>Recurring payments and reminders. No bank link.</li>
+        </ul>
+        <div class="shot"><img src="img/money.webp" alt="Safely Money overview: balance, income and expenses, budgets by category" loading="lazy"></div>
+      </article>
+
+      <article class="module wide" id="scan" style="--c:var(--blue)">
+        <div class="id"><img src="img/key-scanner.png" alt=""><div><h3>Safely Scan</h3><p class="tag">QR and barcodes, with link check</p></div></div>
+        <ul>
+          <li>Scan with the camera or from a photo</li>
+          <li>See where a link really goes before you open it</li>
+          <li>Create QR codes for links, text and Wi-Fi</li>
+        </ul>
+        <div class="shot"><img src="img/scanner.webp" alt="Safely Scan: creating a QR code for a link" loading="lazy"></div>
+      </article>
+
+      <article class="module" id="calc" style="--c:var(--yellow)">
+        <div class="id"><img src="img/key-calculator.png" alt=""><div><h3>Safely Calc</h3><p class="tag">Calculator with tape and memory</p></div></div>
+        <ul>
+          <li>Full expressions, parentheses, percentages</li>
+          <li>A paper tape of past results, tap to reuse</li>
+          <li>Scientific mode with Pro</li>
+        </ul>
+        <div class="shot"><img src="img/calculator.webp" alt="Safely Calc keypad and display" loading="lazy"></div>
+      </article>
+
+      <article class="module" id="convert" style="--c:var(--orange)">
+        <div class="id"><img src="img/key-converter.png" alt=""><div><h3>Safely Convert</h3><p class="tag">Units and conversions, offline</p></div></div>
+        <ul>
+          <li>Length, weight, temperature, volume, area, speed</li>
+          <li>Result as you type, swap in one tap</li>
+          <li>Your recent pairs, always at hand</li>
+        </ul>
+        <div class="shot"><img src="img/converter.webp" alt="Safely Convert in the Blueprint style, converting litres to gallons" loading="lazy"></div>
+      </article>
+
+      <article class="module" id="pdf" style="--c:var(--green)">
+        <div class="id"><img src="img/key-docscan.png" alt=""><div><h3>Safely PDF</h3><p class="tag">Scan documents to PDF</p></div></div>
+        <ul>
+          <li>Multi-page scans with automatic cropping</li>
+          <li>Text recognition on the phone, never in a cloud</li>
+          <li>Searchable PDFs and full-text search with Pro</li>
+        </ul>
+        <div class="shot art" aria-hidden="true"><img src="img/key-docscan.png" alt=""></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="principles" aria-labelledby="principles-title">
+    <div class="head">
+      <div>
+        <p class="eyebrow">How they're made</p>
+        <h2 id="principles-title">Four rules,<br>every app.</h2>
+      </div>
+    </div>
+    <div class="principles">
+      <div class="principle"><span class="n">01</span><h3>Your data stays on your phone</h3><p>No account and no servers of ours. What you type, scan or save is stored on the device, and gone when you uninstall.</p></div>
+      <div class="principle"><span class="n">02</span><h3>Works offline</h3><p>Everything works without a connection, from unit conversion to text recognition.</p></div>
+      <div class="principle"><span class="n">03</span><h3>Ads that stay out of the way</h3><p>One small banner in the free version. Never when the app opens or closes, never during the thing you came to do.</p></div>
+      <div class="principle"><span class="n">04</span><h3>Pay once, keep it</h3><p>Safely Pro is a one-time purchase. No subscription, no trial that turns into a bill.</p></div>
+    </div>
+  </section>
+
+  <section id="pro" aria-labelledby="pro-title">
+    <div class="pro">
+      <div>
+        <p class="eyebrow">Safely Pro</p>
+        <h2 id="pro-title">Pay once.<br>Unlock it all.</h2>
+        <p>One purchase in each app removes the ads, unlocks every style and color, and opens that app's pro tools: scientific mode, unlimited history, searchable PDFs, unlimited entries.</p>
+        <p class="price">One-time purchase · No subscription</p>
+      </div>
+      <div class="swatches" aria-hidden="true">
+        <i style="--c:var(--orange)"></i><i style="--c:var(--blue)"></i><i style="--c:var(--green)"></i>
+        <i style="--c:var(--yellow)"></i><i style="--c:var(--coral)"></i><i class="ring" style="--c:#2a2e2d"></i>
+        <i style="--c:#ffd21f"></i><i style="--c:#1d4ed8"></i><i style="--c:#dc2626"></i>
+        <i style="--c:#16a34a"></i><i style="--c:#f97316"></i><i class="ring" style="--c:#111"></i>
+      </div>
+    </div>
+  </section>
+
   <footer>
-    <a href="safely/privacy/">Privacy Policy</a> ·
-    <a href="mailto:wulfcode.apps@gmail.com">Contact</a>
+    <span class="eyebrow">Safely Apps · independent developer</span>
+    <span><a href="safely/privacy/">Privacy policy</a> · <a href="mailto:wulfcode.apps@gmail.com">wulfcode.apps@gmail.com</a></span>
   </footer>
-</main>
+</div>
+
 </body>
 </html>
