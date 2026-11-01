@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CUBIKEY — Arrow Puzzle 3D</title>
+<meta name="description" content="Turn the cube, tap an arrow, watch it slide out. 80 levels across 4 worlds, Chrono and Master modes, a daily challenge. Free on Google Play.">
+<meta property="og:title" content="CUBIKEY — Arrow Puzzle 3D">
+<meta property="og:description" content="Free every arrow. 80 levels, 4 worlds, 4 game modes. Free on Google Play.">
+<meta property="og:image" content="https://jaranark.github.io/cubikey/img/feature.jpg">
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap">
+<style>
+  :root {
+    --teal: #0f4a4d; --teal-dark: #082f31; --teal-card: #11585b;
+    --gold: #ffcd46; --gold-dark: #b8860b; --wood: #7a3f17;
+    --ink: #140c04; --text: #eef6f3; --muted: #b9d3cf;
+    --title: "Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif;
+    --body: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font: 600 1.05rem/1.55 var(--body); color: var(--text); background: var(--teal-dark); }
+  a { color: var(--gold); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 18px; }
+  .shout { font-family: var(--title); letter-spacing: 0.01em; color: #fff;
+    text-shadow: 0 3px 0 var(--ink), 0 0 2px var(--ink), 2px 2px 0 var(--ink), -2px 2px 0 var(--ink); }
+  .gold { color: var(--gold); }
+
+  /* ---------- hero: the island behind, the logo and the button ---------- */
+  .hero { position: relative; overflow: hidden; min-height: min(92vh, 860px); display: grid; align-items: center;
+    background: url(img/bg.webp) center 30% / cover no-repeat; }
+  .hero::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(8,47,49,0.15) 0%, rgba(8,47,49,0.35) 55%, var(--teal-dark) 100%); }
+  .hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; padding-top: 40px; padding-bottom: 60px; }
+  @media (max-width: 860px) { .hero .wrap { grid-template-columns: 1fr; text-align: center; } }
+  .logo { width: min(460px, 86vw); filter: drop-shadow(0 14px 18px rgba(0,0,0,0.45)); }
+  .hero h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.05; margin: 14px 0 12px; }
+  .hero p { font-size: 1.15rem; max-width: 30em; margin: 0 0 26px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.7); }
+  @media (max-width: 860px) { .hero p { margin-left: auto; margin-right: auto; } }
+  .play { display: inline-flex; align-items: center; gap: 12px; text-decoration: none;
+    font: 1.5rem/1 var(--title); color: #fff; padding: 18px 34px; border-radius: 22px;
+    background: linear-gradient(180deg, #2fd17a, #13924d); border: 4px solid var(--gold);
+    box-shadow: 0 6px 0 var(--gold-dark), 0 14px 26px rgba(0,0,0,0.4); text-shadow: 0 2px 0 rgba(0,0,0,0.45);
+    transition: transform .1s ease, box-shadow .1s ease; }
+  .play:hover { transform: translateY(-2px); }
+  .play:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--gold-dark), 0 6px 12px rgba(0,0,0,0.4); }
+  .play svg { width: 26px; height: 26px; }
+  .soon { display: block; margin-top: 12px; font-size: 0.9rem; color: var(--muted); }
+
+  /* the trailer in a phone */
+  .phone { justify-self: center; width: min(320px, 78vw); aspect-ratio: 9 / 20; padding: 10px; border-radius: 40px;
+    background: #101211; box-shadow: 0 30px 60px -18px rgba(0,0,0,0.6), 0 0 0 3px var(--gold-dark); }
+  .phone video, .phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 31px; display: block; background: #000; }
+
+  /* ---------- sections ---------- */
+  section { padding: 64px 0; }
+  h2 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); text-align: center; margin: 0 0 8px; }
+  .lead { text-align: center; color: var(--muted); max-width: 36em; margin: 0 auto 36px; }
+
+  /* temple cards */
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 960px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .cards { grid-template-columns: 1fr; } }
+  .card { background: linear-gradient(180deg, var(--teal-card), var(--teal)); border: 4px solid var(--gold-dark);
+    border-radius: 22px; padding: 22px 20px; box-shadow: inset 0 0 0 2px rgba(255,205,70,0.35), 0 16px 28px -18px rgba(0,0,0,0.6); }
+  .card h3 { font: 1.45rem/1.1 var(--title); margin: 0 0 8px; }
+  .card p { margin: 0; color: var(--muted); font-size: 0.98rem; }
+  .tag { display: inline-block; font: 0.8rem/1 var(--title); letter-spacing: 0.06em; padding: 6px 10px; border-radius: 10px; margin-bottom: 12px; color: #fff; }
+  .t-classic { background: #e0661c; } .t-nomistake { background: #2b9a57; } .t-chrono { background: #2a7fd4; } .t-master { background: #7b3fc4; }
+
+  /* screenshots strip */
+  .shots { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 4px 18px; }
+  .shots img { flex: none; width: 240px; aspect-ratio: 1 / 2; border-radius: 20px; scroll-snap-align: center;
+    box-shadow: 0 16px 30px -16px rgba(0,0,0,0.7); border: 3px solid var(--gold-dark); }
+
+  /* worlds */
+  .worlds { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .worlds { grid-template-columns: repeat(2, 1fr); } }
+  .world { border-radius: 20px; padding: 20px 16px; text-align: center; border: 3px solid rgba(255,205,70,0.55); }
+  .world b { display: block; font: 1.5rem/1.1 var(--title); }
+  .world span { font-size: 0.92rem; color: #fff; opacity: 0.9; }
+  .w1 { background: linear-gradient(160deg, #3b8f2a, #1d5a1b); } .w2 { background: linear-gradient(160deg, #4aa9d8, #1f5f8e); }
+  .w3 { background: linear-gradient(160deg, #d9a043, #94591d); } .w4 { background: linear-gradient(160deg, #e2512a, #7e1e12); }
+
+  .cta { text-align: center; }
+  footer { border-top: 2px solid rgba(255,205,70,0.3); padding: 34px 0 48px; color: var(--muted); font-size: 0.95rem; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <img class="logo" src="img/logo.webp" alt="CUBIKEY Arrow Puzzle 3D">
+      <h1 class="shout">Free every arrow.<br><span class="gold">One tap at a time.</span></h1>
+      <p>Turn the cube, tap an arrow and it slides out the way it points, if nothing stands in its way. Plan the order, clear the shape and earn 3 stars.</p>
+      <a class="play" href="https://play.google.com/store/apps/details?id=com.wulfcode.cubikey">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M4 2.8v18.4c0 .6.7 1 1.2.7l15.4-9.2c.5-.3.5-1.1 0-1.4L5.2 2.1C4.7 1.8 4 2.2 4 2.8z"/></svg>
+        Get it on Google Play
+      </a>
+      <span class="soon">Free · Android · Plays offline</span>
+    </div>
+    <div class="phone">
+      <video src="cubikey_trailer.mp4" poster="img/poster.webp" autoplay muted loop playsinline controls preload="metadata"></video>
+    </div>
+  </div>
+</header>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="shout">How to play</h2>
+    <p class="lead">Easy to learn, hard to master: the first levels teach you, the later ones hide hundreds of arrows on two faces at once.</p>
+    <div class="cards">
+      <div class="card"><h3 class="gold">Turn</h3><p>Swipe to rotate the shape and look for an arrow with a clear way out.</p></div>
+      <div class="card"><h3 class="gold">Tap</h3><p>Tap it: it slides out over the edge. Blocked? You lose a heart.</p></div>
+      <div class="card"><h3 class="gold">Plan</h3><p>Every arrow leaves in its own direction. Find the right order to free them all.</p></div>
+      <div class="card"><h3 class="gold">Boost</h3><p>Stuck? The Eye shows a free arrow, Undo takes back a mistake, 3 Arrows clears three at once.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="shots">
+  <div class="wrap">
+    <h2 class="shout">A look inside</h2>
+    <p class="lead">Real screens from the game.</p>
+    <div class="shots">
+      <img src="img/shot1.webp" alt="Free every arrow" loading="lazy">
+      <img src="img/shot2.webp" alt="Think before you tap" loading="lazy">
+      <img src="img/shot3.webp" alt="4 worlds" loading="lazy">
+      <img src="img/shot4.webp" alt="Harder and harder" loading="lazy">
+      <img src="img/shot5.webp" alt="4 game modes" loading="lazy">
+      <img src="img/shot6.webp" alt="Earn 3 stars" loading="lazy">
+      <img src="img/shot7.webp" alt="Style your arrows" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section id="worlds">
+  <div class="wrap">
+    <h2 class="shout">4 worlds, 80 levels</h2>
+    <p class="lead">Twenty levels in each world, with a boss shape at the 10th and the 20th.</p>
+    <div class="worlds">
+      <div class="world w1"><b class="shout">Jungle</b><span>Levels 1–20</span></div>
+      <div class="world w2"><b class="shout">Ice</b><span>Levels 21–40</span></div>
+      <div class="world w3"><b class="shout">Desert</b><span>Levels 41–60</span></div>
+      <div class="world w4"><b class="shout">Lava</b><span>Levels 61–80</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="modes">
+  <div class="wrap">
+    <h2 class="shout">4 ways to play</h2>
+    <p class="lead">Every level can be played again in each mode.</p>
+    <div class="cards">
+      <div class="card"><span class="tag t-classic">CLASSIC</span><p>Three hearts, a star for each heart left.</p></div>
+      <div class="card"><span class="tag t-nomistake">NO MISTAKE</span><p>One mistake and it's over. No boosters.</p></div>
+      <div class="card"><span class="tag t-chrono">CHRONO</span><p>Beat the countdown: up to 40 arrows against the clock.</p></div>
+      <div class="card"><span class="tag t-master">MASTER</span><p>Chrono with no mistake allowed. For the best only.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2 class="shout">Ready for the first cube?</h2>
+    <p class="lead">A daily challenge, styles to unlock, achievements and your progress saved with Google Play Games. In English, French, Spanish, German, Italian and Portuguese.</p>
+    <a class="play" href="https://play.google.com/store/apps/details?id=com.wulfcode.cubikey">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M4 2.8v18.4c0 .6.7 1 1.2.7l15.4-9.2c.5-.3.5-1.1 0-1.4L5.2 2.1C4.7 1.8 4 2.2 4 2.8z"/></svg>
+      Get it on Google Play
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 WULFCODE · CUBIKEY</span>
+    <span><a href="privacy.html">Privacy policy</a> · <a href="mailto:wulfcode.apps@gmail.com">wulfcode.apps@gmail.com</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
